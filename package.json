@@ -1,0 +1,125 @@
+{
+    "name": "arduinovscode",
+    "displayName": "Arduino",
+    "description": "Arduino Support for VSCode",
+    "version": "0.0.1",
+    "publisher": "steve3d",
+    "engines": {
+        "vscode": "^1.5.0"
+    },
+    "extensionDependencies": [
+        "ms-vscode.cpptools"
+    ],
+    "categories": [
+        "Other"
+    ],
+    "activationEvents": [
+        "onCommand:extension.build",
+        "onCommand:extension.rebuild",
+        "onCommand:extension.clean",
+        "onCommand:extension.upload",
+        "onCommand:extension.buildAndUpload",
+        "onCommand:extension.rebuildAndUpload",
+        "onCommand:extension.initialize"
+    ],
+    "main": "./out/src/extension",
+    "contributes": {
+        "configuration": {
+            "type": "object",
+            "title": "Arduino configuration",
+            "properties": {
+                "arduino.idePath": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "default": null,
+                    "description": "Specify where the Arduino IDE is."
+                },
+                "arduino.libraryPath": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "default": null,
+                    "description": "Sprcifies the serial port borad are connected."
+                },
+                "arduino.fqbn": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "default": "arduino:avr:uno",
+                    "description": "Sprcifies the borad type to use (fully qualified board name)."
+                },
+                "arduino.serialPort": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "default": "COM3",
+                    "description": "Sprcifies the serial port borad are connected."
+                }
+            }
+        },
+        "commands": [
+            {
+                "command": "extension.build",
+                "title": "Arduino: Build",
+                "icon": "./images/compile.svg"
+            },
+            {
+                "command": "extension.rebuild",
+                "title": "Arduino: Rebuild"
+            },
+            {
+                "command": "extension.clean",
+                "title": "Arduino: Clean"
+            },
+            {
+                "command": "extension.upload",
+                "title": "Arduino: Upload",
+                "icon": "./images/upload.svg"
+            },
+            {
+                "command": "extension.buildAndUpload",
+                "title": "Arduino: Build & Upload"
+            },
+            {
+                "command": "extension.rebuildAndUpload",
+                "title": "Arduino: Rebuild & Upload"
+            },
+            {
+                "command": "extension.initialize",
+                "title": "Arduino: Initialize C++ Intellisense"
+            }
+        ],
+        "menus": {
+            "editor/title": [
+                {
+                    "when": "resourceLangId == cpp",
+                    "command": "extension.build",
+                    "group": "navigation"
+                },
+                {
+                    "when": "resourceLangId == cpp",
+                    "command": "extension.upload",
+                    "group": "navigation"
+                }
+            ]
+        }
+    },
+    "scripts": {
+        "vscode:prepublish": "tsc -p ./",
+        "compile": "tsc -watch -p ./",
+        "postinstall": "node ./node_modules/vscode/bin/install",
+        "test": "node ./node_modules/vscode/bin/test"
+    },
+    "devDependencies": {
+        "typescript": "^2.0.3",
+        "vscode": "^1.0.0",
+        "mocha": "^2.3.3",
+        "@types/node": "^6.0.40",
+        "@types/mocha": "^2.2.32"
+    }
+}
