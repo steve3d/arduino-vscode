@@ -1,6 +1,6 @@
 # Arduino-VSCode README
 
-This is the README for your extension "vsfirst". After writing up a brief description, we recommend including the following sections.
+This is the README for your extension "Arduino-VSCode". After writing up a brief description, we recommend including the following sections.
 
 ## Features
 
