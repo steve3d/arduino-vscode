@@ -1,6 +1,10 @@
-# Arduino-VSCode README
+# Arduino Support for Visual Studio Code
 
-This is the README for your extension "Arduino-VSCode". After writing up a brief description, we recommend including the following sections.
+The Arduino extension makes it easy to build and upload Arduino sketch from Visual Studio Code.
+
+* C++ intellisense with cpptools
+* Build/Compile sketch with VSCode
+* Upload sketch
 
 ## Features
 
