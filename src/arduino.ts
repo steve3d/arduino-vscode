@@ -121,9 +121,9 @@ export class ArduinoVS {
                 {
                     "name": "Arduino",
                     "includePath": [
-                        path.join(idePath, 'hardware\arduino\avr\cores\arduino'),
-                        path.join(idePath, 'hardware\arduino\avr\libraries'),
-                        path.join(idePath, 'hardware\arduino\avr\variants\standard'),
+                        path.join(idePath, 'hardware/arduino/avr/cores/arduino'),
+                        path.join(idePath, 'hardware/arduino/avr/libraries'),
+                        path.join(idePath, 'hardware/arduino/avr/variants/standard'),
                         path.join(idePath, 'libraries')
                     ],
                     "browse": {
