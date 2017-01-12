@@ -16,6 +16,9 @@ export class ConfigUtil {
     get idePath(): string {
         let p = this.config.get<string>('idePath');
 
+        if(p == null)
+            return null;
+
         switch(os.type()) {
             case 'Windows_NT':
                 if(fs.existsSync(path.join(p, 'arduino-builder.exe')))
@@ -23,8 +26,8 @@ export class ConfigUtil {
             case 'Linux':
                 return null;
             case 'Darwin':
-                if(fs.existsSync(path.join(p, 'Content/MacOS')))
-                    return p;
+                if(fs.existsSync(path.join(p, 'Contents/Java/arduino-builder')))
+                    return path.join(p, 'Contents/Java');
         }
 
         return null;
@@ -35,7 +38,7 @@ export class ConfigUtil {
     }
 
     get serialPort(): string {
-        return this.config.get<string>('serialPort');
+        return this.config.get<string>('serialPort', null);
     }
 
     get fqbn(): string {
@@ -67,6 +70,7 @@ export class ConfigUtil {
         return o.filter(x => x != '');
     }
     get uploadOptions(): string[] {
+        console.log(this.config.get<string>('uploadOptions'))
         let o = this.config.get<string>('uploadOptions', '-D').split(' ');
 
         return o.filter(x => x != '');

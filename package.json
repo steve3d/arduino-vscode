@@ -29,36 +29,54 @@
             "title": "Arduino configuration",
             "properties": {
                 "arduino.idePath": {
-                    "type": [
-                        "string",
-                        "null"
-                    ],
+                    "type": ["string"],
                     "default": null,
                     "description": "Specify where the Arduino IDE is."
                 },
                 "arduino.libraryPath": {
-                    "type": [
-                        "string",
-                        "null"
-                    ],
+                    "type": ["string"],
                     "default": null,
                     "description": "Sprcifies the serial port borad are connected."
                 },
                 "arduino.fqbn": {
-                    "type": [
-                        "string",
-                        "null"
-                    ],
+                    "type": ["string"],
                     "default": "arduino:avr:uno",
                     "description": "Sprcifies the borad type to use (fully qualified board name)."
                 },
                 "arduino.serialPort": {
-                    "type": [
-                        "string",
-                        "null"
-                    ],
-                    "default": "COM3",
-                    "description": "Sprcifies the serial port borad are connected."
+                    "type": ["string"],
+                    "default": null,
+                    "description": "Sprcifies the serial port borad are connected. (Windows: COMx, macOS: /dev/cu./dev/cu.usbmodemxxxx)"
+                },
+                "arduino.warnPercentage": {
+                    "type": ["number"],
+                    "default": 75,
+                    "description": ""
+                },
+                "arduino.compileOptions": {
+                    "type": ["string"],
+                    "default": "",
+                    "description": "Additional options for compile"
+                },
+                "arduino.uploadOptions": {
+                    "type": ["string"],
+                    "default": "-D -q",
+                    "description": "Additional options for avrdude upload"
+                },                
+                "arduino.partno": {
+                    "type": ["string"],
+                    "default": "atmega328p",
+                    "description": "Upload: Specify AVR device"
+                },
+                "arduino.programmer": {
+                    "type": ["string"],
+                    "default": "arduino",
+                    "description": "Upload: Specify programmer type"
+                },
+                "arduino.baudrate": {
+                    "type": ["number"],
+                    "default": 115200,
+                    "description": "Upload: Override RS-232 baud rate"
                 }
             }
         },

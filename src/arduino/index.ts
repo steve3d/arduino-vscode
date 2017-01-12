@@ -10,8 +10,10 @@ import { ConfigUtil } from '../config'
 
 export class ArduinoVS {
     private config: ConfigUtil;
-    private updateSettings = `Please update workspace settings, Can't continue without Arduino IDE.`;
+    private updateSettings = `Please update workspace settings, Can't continue without Arduino IDE and the serial port.`;
     private builtEvent = new EventEmitter();
+    private building = false;
+    private uploading = false;
 
     constructor(private output: vscode.OutputChannel) {
         this.config = new ConfigUtil();
@@ -72,6 +74,11 @@ export class ArduinoVS {
     }
 
     build() {
+        if(this.building) {
+            vscode.window.showErrorMessage('Building in progress, please wait a moment.');
+            return;
+        }
+
         let document = vscode.window.activeTextEditor.document;
 
         if (!this.config.hasSettings()) {
@@ -90,6 +97,7 @@ export class ArduinoVS {
 
         this.output.clear();
         this.output.append('============== Begin to compile. ==============\n')
+        this.building = true;
         let spawn = child_process.spawn(this.config.builder, this.config.buildArgs);
         let statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right);
         let status = 'Compiling ';
@@ -105,6 +113,7 @@ export class ArduinoVS {
             this.output.append(`\nBuild ${result ? 'failed' : 'success'}.\n`);
             this.builtEvent.emit('build', result);
             statusBarItem.dispose();
+            this.building = false;
             if(result)
                 this.output.show(true);
         })
@@ -142,17 +151,35 @@ export class ArduinoVS {
     }
 
     upload() {
-        if (this.needRebuild) {
-            vscode.window.showErrorMessage("Source file need to compile or rebuild first.");
+        if(this.uploading || this.building) {
+            vscode.window.showErrorMessage('Building or uploading in progress. Please wait');
             return;
         }
 
+        if(!this.config.serialPort) {
+            vscode.window.showErrorMessage('Please specify the serial port of Arduino board.');
+            return;
+        }
+
+        if (this.needRebuild) {
+            this.build();
+            this.builtEvent.on('build', result => {
+                if(result == 0)
+                    this._realUpload();
+            })
+        } else
+            this._realUpload();
+    }
+
+    private _realUpload() {
+        this.uploading = true;
         let spawn = child_process.spawn(this.config.avrdude, this.config.uploadArgs);
 
         this.output.append('\n============== Begin to upload. ==============\n');
         spawn.stdout.on('data', data => this.output.append(String.fromCharCode.apply(null, data)));
         spawn.stderr.on('data', data => this.output.append(String.fromCharCode.apply(null, data)));
         spawn.on('close', (result) => {
+            this.uploading = false;
             this.output.append(`\nUpload ${result ? 'failed' : 'success'}.\n`);
             if(result)
                 this.output.show(true);
