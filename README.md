@@ -36,13 +36,9 @@ This extension contributes the following settings:
 
 Linux support not tested.
 
-## Release Notes
+## Change log
 
-Users appreciate release notes as you update your extension.
-
-### 0.0.1
-
-Initial release
+Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.
 
 -----------------------------------------------------------------------------------------------------------
 

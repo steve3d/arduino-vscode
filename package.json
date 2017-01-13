@@ -2,9 +2,10 @@
     "name": "arduino-vscode",
     "displayName": "Arduino",
     "description": "Arduino Support for VSCode",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "publisher": "steveyin",
     "license": "LGPL-3.0",
+    "icon": "images/arduino-logo.svg",
     "preview": true,
     "homepage": "https://github.com/steve3d/arduino-vscode/blob/master/README.md",
     "repository": {
