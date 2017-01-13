@@ -4,85 +4,91 @@ import * as vscode from 'vscode';
 import * as os from 'os';
 import * as path from 'path';
 import * as fs from 'fs';
+import * as process from 'process';
 
 
 export class ConfigUtil {
+
     private _convertSeprator = false;
-
-    private get config(): vscode.WorkspaceConfiguration {
-        return vscode.workspace.getConfiguration('arduino');
-    }
-
-    get idePath(): string {
-        let p = this.config.get<string>('idePath');
-
-        if(p == null)
-            return null;
-
-        switch(os.type()) {
-            case 'Windows_NT':
-                if(fs.existsSync(path.join(p, 'arduino-builder.exe')))
-                    return p;
-            case 'Linux':
-                return null;
-            case 'Darwin':
-                if(fs.existsSync(path.join(p, 'Contents/Java/arduino-builder')))
-                    return path.join(p, 'Contents/Java');
-        }
-
-        return null;
-    }
-
-    get libraryPath(): string {
-        return this.config.get<string>('libraryPath');
-    }
-
-    get serialPort(): string {
-        return this.config.get<string>('serialPort', null);
-    }
-
-    get fqbn(): string {
-        return this.config.get<string>('fqbn', 'arduino:avr:uno');
-    }
-
-    get warnPercentage(): number {
-        return this.config.get<number>('warnPercentage', 75);
-    }
-
-    get partno(): string {
-        return this.config.get<string>('partno', 'atmega328p');
-    }
-
-    get programmer(): string {
-        return this.config.get<string>('programmer', 'arduino');
-    }
-
-    get baudrate(): number{
-        return this.config.get<number>('baudrate', 115200);
-    }
-    get convertSeperator(): boolean {
-        return os.type() == 'Windows_NT';
-    }
-
-    get compileOptions(): string[] {
-        let o = this.config.get<string>('compileOptions', '-ide-version=10800').split(' ');
-
-        return o.filter(x => x != '');
-    }
-    get uploadOptions(): string[] {
-        console.log(this.config.get<string>('uploadOptions'))
-        let o = this.config.get<string>('uploadOptions', '-D').split(' ');
-
-        return o.filter(x => x != '');
-    }
+    private _idePath: string;
+    private _libraryPath: string;
+    private _serialPort: string;
+    private _fqbn: string;
+    private _warnPercentage: number;
+    private _partno: string;
+    private _programmer: string;
+    private _baudrate: number;
+    private _compileOptions: string[];
+    private _uploadOptions: string[];
 
     constructor() {
         if(os.type() == 'Windows_NT')
             this._convertSeprator = true;
+        this._updateSettings();
+        vscode.workspace.onDidChangeConfiguration((e) => this._updateSettings());
     }
 
-    hasSettings(): boolean {
-        return this.idePath != null && this.libraryPath != null && this.serialPort != null;
+    private _updateSettings() {
+        let config = vscode.workspace.getConfiguration('arduino');
+        this._fqbn = config.get<string>('fqbn');
+        this._warnPercentage = config.get<number>('warnPercentage');
+        this._partno = config.get<string>('partno');
+        this._programmer = config.get<string>('programmer');
+        this._baudrate = config.get<number>('baudrate');
+
+        this._compileOptions = config.get<string>('compileOptions', '').split(' ').filter(x => x != '');
+        this._uploadOptions = config.get<string>('uploadOptions', '').split(' ').filter(x => x != '');
+
+        this._updateIdePath(config);
+        this._updateLibraryPath(config);
+    }
+
+    private _updateIdePath(config: vscode.WorkspaceConfiguration) {
+        this._idePath = config.get<string>('idePath');
+
+        switch(os.type()) {
+            case 'Windows_NT':
+                if(this._idePath == null)
+                    this._idePath = 'C:\\Program Files (x86)\\Arduino';
+
+                if(!fs.existsSync(path.join(this._idePath, 'arduino-builder.exe')))
+                    this._idePath = null
+                break;
+            case 'Linux':
+                if(!fs.existsSync(path.join(this._idePath, 'arduino-builder')))
+                    this._idePath = null
+                break;
+            case 'Darwin':
+                if(this._idePath == null)
+                    this._idePath = '/Applications/Arduino.app'
+                
+                if(fs.existsSync(path.join(this._idePath, 'Contents/Java/arduino-builder')))
+                    this._idePath = path.join(this._idePath, 'Contents/Java');
+                else
+                    this._idePath = null;
+
+                break;
+            default:
+                this._idePath = null;
+        }
+    }
+
+    private _updateLibraryPath(config: vscode.WorkspaceConfiguration) {
+        this._libraryPath = config.get<string>('libraryPath');
+
+        if(this._libraryPath == null) {
+            this._libraryPath = path.join(os.homedir(), 'Documents/Arduino/libraries');     
+            if(!fs.existsSync(this._libraryPath))
+                this._libraryPath = os.homedir();
+        }
+    }
+
+    get hasIdePath(): boolean {
+        return this._idePath != null;
+    }
+
+    get hasSerialPort(): boolean {
+        return this._serialPort != null;
     }
 
     get basename(): string {
@@ -114,14 +120,14 @@ export class ConfigUtil {
 
     get cppConfig(): any {
         let includes = [
-            path.join(this.idePath, 'hardware/arduino/avr/cores/arduino'),
-            path.join(this.idePath, 'hardware/arduino/avr/libraries'),
-            path.join(this.idePath, 'hardware/arduino/avr/variants/standard'),
-            path.join(this.idePath, 'libraries')
+            path.join(this._idePath, 'hardware/arduino/avr/cores/arduino'),
+            path.join(this._idePath, 'hardware/arduino/avr/libraries'),
+            path.join(this._idePath, 'hardware/arduino/avr/variants/standard'),
+            path.join(this._idePath, 'libraries')
         ];
 
-        if(this.libraryPath)
-            includes.push(this.libraryPath);
+        if(this._libraryPath)
+            includes.push(this._libraryPath);
 
         if(this._convertSeprator)
             includes = includes.map(x => x.replace(/\//g, '\\'));
@@ -143,38 +149,38 @@ export class ConfigUtil {
     get buildArgs(): string[] {
         let args = ['-compile',
             '-logger', 'machine',
-            '-hardware', `${this.idePath}/hardware`,
-            '-tools', `${this.idePath}/tools-builder`,
-            '-tools', `${this.idePath}/hardware/tools/avr`,
-            '-built-in-libraries', `${this.idePath}/libraries`,
-            '-libraries', `${this.libraryPath}`,
-            `-fqbn=${this.fqbn}`,
+            '-hardware', `${this._idePath}/hardware`,
+            '-tools', `${this._idePath}/tools-builder`,
+            '-tools', `${this._idePath}/hardware/tools/avr`,
+            '-built-in-libraries', `${this._idePath}/libraries`,
+            '-libraries', `${this._libraryPath}`,
+            `-fqbn=${this._fqbn}`,
             '-build-path', this.tempPath,
             '-warnings=none',
-            `-prefs=build.warn_data_percentage=${this.warnPercentage}`,
-            `-prefs=runtime.tools.avr-gcc.path=${this.idePath}/hardware/tools/avr`,
-            `-prefs=runtime.tools.avrdude.path=${this.idePath}/hardware/tools/avr`,
-            `-prefs=runtime.tools.arduinoOTA.path=${this.idePath}/hardware/tools/avr`,
+            `-prefs=build.warn_data_percentage=${this._warnPercentage}`,
+            `-prefs=runtime.tools.avr-gcc.path=${this._idePath}/hardware/tools/avr`,
+            `-prefs=runtime.tools.avrdude.path=${this._idePath}/hardware/tools/avr`,
+            `-prefs=runtime.tools.arduinoOTA.path=${this._idePath}/hardware/tools/avr`,
             vscode.window.activeTextEditor.document.fileName
-        ].concat(this.compileOptions);
+        ].concat(this._compileOptions);
 
         return this._convertSeprator ? args.map(x => x.replace(/\//g, '\\')) : args;
     }
 
     get uploadArgs(): string[] {
-        let args = [`-C${this.idePath}/hardware/tools/avr/etc/avrdude.conf`,
-            `-p${this.partno}`,
-            `-c${this.programmer}`,
-            `-P${this.serialPort}`,
-            `-b${this.baudrate}`,
+        let args = [`-C${this._idePath}/hardware/tools/avr/etc/avrdude.conf`,
+            `-p${this._partno}`,
+            `-c${this._programmer}`,
+            `-P${this._serialPort}`,
+            `-b${this._baudrate}`,
             `-Uflash:w:${this.hexPath}:i`
-        ].concat(this.uploadOptions);
+        ].concat(this._uploadOptions);
 
         return this._convertSeprator ? args.map(x => x.replace(/\//g, '\\')) : args;
     }
 
     get builder(): string {
-        let builder = path.join(this.idePath, 'arduino-builder');
+        let builder = path.join(this._idePath, 'arduino-builder');
 
         if(this._convertSeprator)
             builder = builder.replace(/\//g, '\\') + '.exe';
@@ -183,7 +189,7 @@ export class ConfigUtil {
     }
 
     get avrdude(): string {
-        let avrdude = path.join(this.idePath, 'hardware/tools/avr/bin/avrdude');
+        let avrdude = path.join(this._idePath, 'hardware/tools/avr/bin/avrdude');
 
         if(this._convertSeprator)
             avrdude = avrdude.replace(/\\/g, '\\') + '.exe';

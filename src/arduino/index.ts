@@ -14,9 +14,13 @@ export class ArduinoVS {
     private builtEvent = new EventEmitter();
     private building = false;
     private uploading = false;
+    private diagnostics: vscode.DiagnosticCollection;
+    private errors: Object;
 
     constructor(private output: vscode.OutputChannel) {
         this.config = new ConfigUtil();
+
+        this.diagnostics = vscode.languages.createDiagnosticCollection();
     }
 
     get needRebuild(): boolean {
@@ -38,7 +42,7 @@ export class ArduinoVS {
     }
 
     initialize() {
-        if (!this.config.hasSettings()) {
+        if (!this.config.hasIdePath || !this.config.hasSerialPort) {
             vscode.window.showErrorMessage(this.updateSettings);
             return;
         }
@@ -53,11 +57,12 @@ export class ArduinoVS {
         output.forEach(line => {
             if(line == '')
                 return;
+
             let parts = line.split(' ||| ');
             if(parts.length == 3) {
                 let value = parts[2].substr(1, parts[2].length-2);
                 if(line.includes('Progress'))
-                    item.text = status + value + '%';
+                    item.text = status + value + '%';            
                 else {
                     let values = value.split(' ');
                     if(values.length == 3)
@@ -69,8 +74,24 @@ export class ArduinoVS {
                 }
 
             } else
-                this.output.append(line + '\n');
+                this.output.append(line + '\n');            
         })
+    }
+
+    addDiagnostic(status: RegExpMatchArray) {
+        if(status == null)
+            return;
+
+        if(!this.errors.hasOwnProperty(status[1]))
+            this.errors[status[1]] = [];
+        let line = parseInt(status[2], 10)-1;
+        let column = parseInt(status[3], 10);
+        let diag = new vscode.Diagnostic(
+            new vscode.Range(line, column, line, column),
+            status[5], 
+            status[4] == 'error' ? vscode.DiagnosticSeverity.Error : vscode.DiagnosticSeverity.Warning);
+
+        this.errors[status[1]].push(diag);
     }
 
     build() {
@@ -81,8 +102,8 @@ export class ArduinoVS {
 
         let document = vscode.window.activeTextEditor.document;
 
-        if (!this.config.hasSettings()) {
-            vscode.window.showErrorMessage(this.updateSettings);
+        if (!this.config.hasIdePath) {
+            vscode.window.showErrorMessage('Can not build anything without Arduino IDE, please update settings.');
             return;
         }
 
@@ -95,6 +116,8 @@ export class ArduinoVS {
                 .then((success) => console.log('save status:', success));
         }
 
+        this.errors = {};
+        this.diagnostics.clear();
         this.output.clear();
         this.output.append('============== Begin to compile. ==============\n')
         this.building = true;
@@ -108,15 +131,36 @@ export class ArduinoVS {
             statusBarItem,
             status));
 
-        spawn.stderr.on('data', data => this.output.append(String.fromCharCode.apply(null, data)));
-        spawn.on('close', (result) => {
-            this.output.append(`\nBuild ${result ? 'failed' : 'success'}.\n`);
-            this.builtEvent.emit('build', result);
-            statusBarItem.dispose();
-            this.building = false;
-            if(result)
-                this.output.show(true);
-        })
+        spawn.stderr.on('data', data => {
+            let error:string = String.fromCharCode.apply(null, data);
+
+            error.split('\n')
+                .forEach(line => this.addDiagnostic(line.match(/(.*):(\d+):(\d+):\s+(warning|error):\s+(.*)/)));
+
+            this.output.append(error); 
+        });
+
+        spawn.on('close', (result) => this.onBuildFinished(result, statusBarItem))
+    }
+
+    onBuildFinished(result: number, statusBarItem: vscode.StatusBarItem) {
+        this.builtEvent.emit('build', result);
+        statusBarItem.dispose();
+        this.building = false;
+        if(result)
+            this.output.show(true);
+
+        let items = [];
+        for (let key in this.errors) {
+            if (this.errors.hasOwnProperty(key)) {
+                items.push([vscode.Uri.file(key), this.errors[key]]);
+            }
+        }
+
+        this.diagnostics.set(items);
+
+        if(result)
+            vscode.window.showErrorMessage('Build failed.');
     }
 
     deleteFolderRecursive(path) {
@@ -156,8 +200,8 @@ export class ArduinoVS {
             return;
         }
 
-        if(!this.config.serialPort) {
-            vscode.window.showErrorMessage('Please specify the serial port of Arduino board.');
+        if(!this.config.hasSerialPort) {
+            vscode.window.showErrorMessage('Can not upload without serial port specified, please update settings.');
             return;
         }
 

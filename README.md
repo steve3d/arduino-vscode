@@ -34,7 +34,7 @@ This extension contributes the following settings:
 
 ## Known Issues
 
-No linux support yet.
+Linux support not tested.
 
 ## Release Notes
 
