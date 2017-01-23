@@ -35,6 +35,7 @@ export class ConfigUtil {
         this._partno = config.get<string>('partno');
         this._programmer = config.get<string>('programmer');
         this._baudrate = config.get<number>('baudrate');
+        this._serialPort = config.get<string>('serialPort');
 
         this._compileOptions = config.get<string>('compileOptions', '').split(' ').filter(x => x != '');
         this._uploadOptions = config.get<string>('uploadOptions', '').split(' ').filter(x => x != '');
@@ -61,7 +62,7 @@ export class ConfigUtil {
             case 'Darwin':
                 if(this._idePath == null)
                     this._idePath = '/Applications/Arduino.app'
-                
+
                 if(fs.existsSync(path.join(this._idePath, 'Contents/Java/arduino-builder')))
                     this._idePath = path.join(this._idePath, 'Contents/Java');
                 else
@@ -77,7 +78,7 @@ export class ConfigUtil {
         this._libraryPath = config.get<string>('libraryPath');
 
         if(this._libraryPath == null) {
-            this._libraryPath = path.join(os.homedir(), 'Documents/Arduino/libraries');     
+            this._libraryPath = path.join(os.homedir(), 'Documents/Arduino/libraries');
             if(!fs.existsSync(this._libraryPath))
                 this._libraryPath = os.homedir();
         }
