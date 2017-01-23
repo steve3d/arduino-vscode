@@ -3,6 +3,9 @@ All notable changes to the "vsfirst" extension will be documented in this file.
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## 0.1.2 - 2017-01-23
+- fix a bug of update configuration of serialPort
+
 ## 0.1.1 - 2017-01-14
 - add a extension logo
 
