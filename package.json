@@ -2,7 +2,7 @@
     "name": "arduino-vscode",
     "displayName": "Arduino",
     "description": "Arduino Support for VSCode",
-    "version": "0.1.1",
+    "version": "0.1.2",
     "publisher": "steveyin",
     "license": "LGPL-3.0",
     "icon": "images/arduino-logo.svg",
@@ -70,7 +70,7 @@
                     "type": ["string"],
                     "default": "-D -q",
                     "description": "Additional options for avrdude upload"
-                },                
+                },
                 "arduino.partno": {
                     "type": ["string"],
                     "default": "atmega328p",
