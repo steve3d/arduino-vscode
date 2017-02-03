@@ -161,9 +161,8 @@ export class ConfigUtil {
             `-prefs=build.warn_data_percentage=${this._warnPercentage}`,
             `-prefs=runtime.tools.avr-gcc.path=${this._idePath}/hardware/tools/avr`,
             `-prefs=runtime.tools.avrdude.path=${this._idePath}/hardware/tools/avr`,
-            `-prefs=runtime.tools.arduinoOTA.path=${this._idePath}/hardware/tools/avr`,
-            vscode.window.activeTextEditor.document.fileName
-        ].concat(this._compileOptions);
+            `-prefs=runtime.tools.arduinoOTA.path=${this._idePath}/hardware/tools/avr`
+        ].concat(this._compileOptions, vscode.window.activeTextEditor.document.fileName);
 
         return this._convertSeprator ? args.map(x => x.replace(/\//g, '\\')) : args;
     }
