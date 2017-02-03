@@ -62,7 +62,7 @@ export class ArduinoVS {
             if(parts.length == 3) {
                 let value = parts[2].substr(1, parts[2].length-2);
                 if(line.includes('Progress'))
-                    item.text = status + value + '%';            
+                    item.text = status + value + '%';
                 else {
                     let values = value.split(' ');
                     if(values.length == 3)
@@ -74,7 +74,7 @@ export class ArduinoVS {
                 }
 
             } else
-                this.output.append(line + '\n');            
+                this.output.append(line + '\n');
         })
     }
 
@@ -88,7 +88,7 @@ export class ArduinoVS {
         let column = parseInt(status[3], 10);
         let diag = new vscode.Diagnostic(
             new vscode.Range(line, column, line, column),
-            status[5], 
+            status[5],
             status[4] == 'error' ? vscode.DiagnosticSeverity.Error : vscode.DiagnosticSeverity.Warning);
 
         this.errors[status[1]].push(diag);
@@ -120,6 +120,7 @@ export class ArduinoVS {
         this.diagnostics.clear();
         this.output.clear();
         this.output.append('============== Begin to compile. ==============\n')
+        this.output.append(`${this.config.buildArgs.join(' ')}\n`);
         this.building = true;
         let spawn = child_process.spawn(this.config.builder, this.config.buildArgs);
         let statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right);
@@ -132,12 +133,12 @@ export class ArduinoVS {
             status));
 
         spawn.stderr.on('data', data => {
-            let error:string = String.fromCharCode.apply(null, data);
+            let error:string = data.toString();
 
             error.split('\n')
                 .forEach(line => this.addDiagnostic(line.match(/(.*):(\d+):(\d+):\s+(warning|error):\s+(.*)/)));
 
-            this.output.append(error); 
+            this.output.append(error);
         });
 
         spawn.on('close', (result) => this.onBuildFinished(result, statusBarItem))
