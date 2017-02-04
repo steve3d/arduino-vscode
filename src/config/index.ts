@@ -20,6 +20,7 @@ export class ConfigUtil {
     private _baudrate: number;
     private _compileOptions: string[];
     private _uploadOptions: string[];
+    private _verbose: boolean;
 
     constructor() {
         if(os.type() == 'Windows_NT')
@@ -36,6 +37,7 @@ export class ConfigUtil {
         this._programmer = config.get<string>('programmer');
         this._baudrate = config.get<number>('baudrate');
         this._serialPort = config.get<string>('serialPort');
+        this._verbose = config.get<boolean>('verbose');
 
         this._compileOptions = config.get<string>('compileOptions', '').split(' ').filter(x => x != '');
         this._uploadOptions = config.get<string>('uploadOptions', '').split(' ').filter(x => x != '');
@@ -162,8 +164,8 @@ export class ConfigUtil {
             `-prefs=runtime.tools.avr-gcc.path=${this._idePath}/hardware/tools/avr`,
             `-prefs=runtime.tools.avrdude.path=${this._idePath}/hardware/tools/avr`,
             `-prefs=runtime.tools.arduinoOTA.path=${this._idePath}/hardware/tools/avr`,
-            vscode.window.activeTextEditor.document.fileName
-        ].concat(this._compileOptions);
+        ].concat(this._compileOptions,
+            vscode.window.activeTextEditor.document.fileName);
 
         return this._convertSeprator ? args.map(x => x.replace(/\//g, '\\')) : args;
     }
@@ -174,8 +176,8 @@ export class ConfigUtil {
             `-c${this._programmer}`,
             `-P${this._serialPort}`,
             `-b${this._baudrate}`,
-            `-Uflash:w:${this.hexPath}:i`
-        ].concat(this._uploadOptions);
+        ].concat(this._uploadOptions,
+            `-Uflash:w:${this.hexPath}:i`);
 
         return this._convertSeprator ? args.map(x => x.replace(/\//g, '\\')) : args;
     }
@@ -196,5 +198,9 @@ export class ConfigUtil {
             avrdude = avrdude.replace(/\\/g, '\\') + '.exe';
 
         return avrdude;
+    }
+
+    get verbose(): boolean {
+        return this._verbose;
     }
 }

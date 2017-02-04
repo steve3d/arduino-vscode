@@ -1,7 +1,9 @@
 # Change Log
-All notable changes to the "vsfirst" extension will be documented in this file.
+All notable changes to the "arduino-vscode" extension will be documented in this file.
 
-Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
+## 0.1.3 - 2017-02-04
+- added a verbose option, when build/upload, the build/upload flags will also shown in the output
+- make sure the file flag in build/upload is placed as last flag.
 
 ## 0.1.2 - 2017-01-23
 - fix a bug of update configuration of serialPort

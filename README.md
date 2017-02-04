@@ -12,7 +12,7 @@ Integrate the Arduino IDE for VSCode, with this extension, you can edit sketch w
 
 ## Requirements
 
-* Recent version of Arduino IDE
+* Recent version of Arduino IDE (at least v1.8.x)
 * ms-vscode.cpptools extension for C++ intellisense to work
 * A Arduino compatiable board to develop. :)
 
@@ -21,20 +21,21 @@ Integrate the Arduino IDE for VSCode, with this extension, you can edit sketch w
 
 This extension contributes the following settings:
 
-* `arduino.idePath`: set to `blah` to do something
-* `arduino.libraryPath`: set to `blah` to do something
-* `arduino.fqbn`: set to `blah` to do something
-* `arduino.serialPort`: set to `blah` to do something
+* `arduino.idePath`: Specify where the Arduino IDE is (Note: Absolute path only).
+* `arduino.libraryPath`: Sprcifies the serial port borad are connected (Note: Absolute path only).
+* `arduino.fqbn`: Specifies the borad type to use (fully qualified board name).
+* `arduino.serialPort`: Specifies the serial port borad are connected. (Windows: COMx, macOS: /dev/cu./dev/cu.usbmodemxxxx, Linux: /dev/ttyUSBxx)
 * `arduino.warnPercentage`: set to `blah` to do something
-* `arduino.compileOptions`: set to `blah` to do something
-* `arduino.uploadOptions`: set to `blah` to do something
-* `arduino.partno`: set to `blah` to do something
-* `arduino.programmer`: set to `blah` to do something
-* `arduino.baudrate`: set to `blah` to do something
+* `arduino.compileOptions`: Additional options for compile the sketch
+* `arduino.uploadOptions`: Additional options for avrdude upload the compiled sketch
+* `arduino.partno`: Specify AVR device (Upload only)
+* `arduino.programmer`: Specify programmer type (Upload only)
+* `arduino.baudrate`: Override RS-232 baud rate (Upload only)
+* `arduino.verbose`: Use verbose output when build and upload.
 
 ## Known Issues
 
-Linux support not tested.
+Linux support not tested, but it should work.
 
 ## Change log
 

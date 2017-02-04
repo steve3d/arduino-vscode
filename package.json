@@ -2,7 +2,7 @@
     "name": "arduino-vscode",
     "displayName": "Arduino",
     "description": "Arduino Support for VSCode",
-    "version": "0.1.2",
+    "version": "0.1.3",
     "publisher": "steveyin",
     "license": "LGPL-3.0",
     "icon": "images/arduino-logo.svg",
@@ -39,22 +39,22 @@
                 "arduino.idePath": {
                     "type": ["string"],
                     "default": null,
-                    "description": "Specify where the Arduino IDE is."
+                    "description": "Specify where the Arduino IDE is (Absolute path only)."
                 },
                 "arduino.libraryPath": {
                     "type": ["string"],
                     "default": null,
-                    "description": "Sprcifies the serial port borad are connected."
+                    "description": "Specifies the serial port borad are connected (Absolute path only)."
                 },
                 "arduino.fqbn": {
                     "type": ["string"],
                     "default": "arduino:avr:uno",
-                    "description": "Sprcifies the borad type to use (fully qualified board name)."
+                    "description": "Specifies the borad type to use (fully qualified board name)."
                 },
                 "arduino.serialPort": {
                     "type": ["string"],
                     "default": null,
-                    "description": "Sprcifies the serial port borad are connected. (Windows: COMx, macOS: /dev/cu./dev/cu.usbmodemxxxx)"
+                    "description": "Specifies the serial port borad are connected. (Windows: COMx, macOS: /dev/cu./dev/cu.usbmodemxxxx, Linux: /dev/ttyUSBxx)"
                 },
                 "arduino.warnPercentage": {
                     "type": ["number"],
@@ -85,6 +85,11 @@
                     "type": ["number"],
                     "default": 115200,
                     "description": "Upload: Override RS-232 baud rate"
+                },
+                "arduino.verbose": {
+                    "type": ["boolean"],
+                    "default": false,
+                    "description": "Use verbose output in build and upload showing the build/upload flags."
                 }
             }
         },
