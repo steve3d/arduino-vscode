@@ -150,8 +150,10 @@ export class ConfigUtil {
     }
 
     get buildArgs(): string[] {
-        let args = ['-compile',
-            '-logger', 'machine',
+        let args = [
+            this._verbose ? '-verbose' : '',
+            '-compile',
+            '-logger', this._verbose ? 'human' : 'machine',
             '-hardware', `${this._idePath}/hardware`,
             '-tools', `${this._idePath}/tools-builder`,
             '-tools', `${this._idePath}/hardware/tools/avr`,

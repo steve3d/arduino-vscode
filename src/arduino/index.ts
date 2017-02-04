@@ -120,7 +120,10 @@ export class ArduinoVS {
         this.diagnostics.clear();
         this.output.clear();
         this.output.append('============== Begin to compile. ==============\n')
-        this.output.append(this.config.verbose ? `${this.config.buildArgs.join(' ')}\n` : '');
+        if(this.config.verbose) {
+            this.output.append(this.config.builder + ' ');
+            this.output.append(this.config.buildArgs.join(' ') + '\n');
+        }
         this.building = true;
         let spawn = child_process.spawn(this.config.builder, this.config.buildArgs);
         let statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right);
@@ -221,7 +224,11 @@ export class ArduinoVS {
         let spawn = child_process.spawn(this.config.avrdude, this.config.uploadArgs);
 
         this.output.append('\n============== Begin to upload. ==============\n');
-        this.output.append(this.config.verbose ? `${this.config.uploadArgs.join(' ')}\n` : '');
+        if(this.config.verbose) {
+            this.output.append(this.config.avrdude + ' ');
+            this.output.append(this.config.uploadArgs.join(' ') + '\n');
+        }
+
         spawn.stdout.on('data', data => this.output.append(String.fromCharCode.apply(null, data)));
         spawn.stderr.on('data', data => this.output.append(String.fromCharCode.apply(null, data)));
         spawn.on('close', (result) => {

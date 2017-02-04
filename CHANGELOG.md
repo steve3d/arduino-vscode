@@ -1,6 +1,9 @@
 # Change Log
 All notable changes to the "arduino-vscode" extension will be documented in this file.
 
+## 0.1.4 - 2017-02-04
+- make the verbose option the real verbose.
+
 ## 0.1.3 - 2017-02-04
 - added a verbose option, when build/upload, the build/upload flags will also shown in the output
 - make sure the file flag in build/upload is placed as last flag.
