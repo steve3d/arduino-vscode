@@ -19,6 +19,7 @@ export class ConfigUtil {
     private _programmer: string;
     private _baudrate: number;
     private _compileOptions: string[];
+    private _uploader: string = null;
     private _uploadOptions: string[];
     private _verbose: boolean;
 
@@ -40,6 +41,8 @@ export class ConfigUtil {
         this._verbose = config.get<boolean>('verbose');
 
         this._compileOptions = config.get<string>('compileOptions', '').split(' ').filter(x => x != '');
+
+        this._uploader = config.get<string>('uploader');
         this._uploadOptions = config.get<string>('uploadOptions', '').split(' ').filter(x => x != '');
 
         this._updateIdePath(config);
@@ -74,6 +77,10 @@ export class ConfigUtil {
             default:
                 this._idePath = null;
         }
+
+        // custom uploader must also exists
+        if(this._uploader && !fs.existsSync(this._uploader))
+            this._uploader = null;
     }
 
     private _updateLibraryPath(config: vscode.WorkspaceConfiguration) {
@@ -103,7 +110,7 @@ export class ConfigUtil {
     }
 
     get hexPath(): string {
-        return path.join(vscode.workspace.rootPath, `tmp/${this.basename}/${this.filename}.hex`);
+        return path.join(vscode.workspace.rootPath, `tmp/${this.basename}/${this.filename}`);
     }
 
     get tempPath(): string {
@@ -176,13 +183,31 @@ export class ConfigUtil {
     }
 
     get uploadArgs(): string[] {
-        let args = [`-C${this._idePath}/hardware/tools/avr/etc/avrdude.conf`,
-            `-p${this._partno}`,
-            `-c${this._programmer}`,
-            `-P${this._serialPort}`,
-            `-b${this._baudrate}`,
-        ].concat(this._uploadOptions,
-            `-Uflash:w:${this.hexPath}:i`);
+        let args: string[];
+        if(this._uploader) {
+            args = this._uploadOptions
+                .map(x => x.replace(/\$(TARGET|BAUDRATE|SERIALPORT)/,
+                    (match, p1) => {
+                        switch(match) {
+                            case '$TARGET':
+                                return this.hexPath;
+                            case '$BAUDRATE':
+                                return this._baudrate.toString();
+                            case '$SERIALPORT':
+                                return this._serialPort;
+                        }
+
+                        return match;
+                    } ));
+        } else {
+            args = [`-C${this._idePath}/hardware/tools/avr/etc/avrdude.conf`,
+                `-p${this._partno}`,
+                `-c${this._programmer}`,
+                `-P${this._serialPort}`,
+                `-b${this._baudrate}`,
+            ].concat(this._uploadOptions,
+                `-Uflash:w:${this.hexPath}.hex:i`);
+        }
 
         return this._convertSeprator ? args.map(x => x.replace(/\//g, '\\')) : args;
     }
@@ -197,6 +222,9 @@ export class ConfigUtil {
     }
 
     get avrdude(): string {
+        if(this._uploader)
+            return this._uploader;
+
         let avrdude = path.join(this._idePath, 'hardware/tools/avr/bin/avrdude');
 
         if(this._convertSeprator)

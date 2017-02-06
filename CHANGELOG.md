@@ -1,6 +1,9 @@
 # Change Log
 All notable changes to the "arduino-vscode" extension will be documented in this file.
 
+## 0.2.0 - 2017-02-06
+- support custom uploader
+
 ## 0.1.4 - 2017-02-04
 - make the verbose option the real verbose.
 

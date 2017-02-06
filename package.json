@@ -2,7 +2,7 @@
     "name": "arduino-vscode",
     "displayName": "Arduino",
     "description": "Arduino Support for VSCode",
-    "version": "0.1.4",
+    "version": "0.2.0",
     "publisher": "steveyin",
     "license": "LGPL-3.0",
     "icon": "images/arduino-logo.svg",
@@ -65,6 +65,11 @@
                     "type": ["string"],
                     "default": "",
                     "description": "Additional options for compile"
+                },
+                "arduino.uploader": {
+                    "type": ["string"],
+                    "default": null,
+                    "description": "Custom uploader for extra board types (Note: Set full upload options with this)"
                 },
                 "arduino.uploadOptions": {
                     "type": ["string"],
