@@ -49,12 +49,13 @@ Once you set the uploader, the extension will use the `arduino.uploadOptions` wi
 For example:
 
 ```
+"arduino.fqbn": "esp8266:esp8266:nodemcu:CpuFrequency=80,UploadSpeed=115200,FlashSize=4M3M",
 "arduino.uploader" : "/Users/steve/Library/Arduino15/packages/esp8266/tools/esptool/0.4.9/esptool",
 "arduino.uploadOptions": "-vv -cd ck -cb $BAUDRATE -cp $SERIALPORT -ca 0x00000 -cf $TARGET.bin",
 "arduino.compileOptions": "-hardware /Users/steve/Library/Arduino15/packages -tools /Users/steve/Library/Arduino15/packages -prefs=runtime.tools.esptool.path=/Users/steve/Library/Arduino15/packages/esp8266/tools/esptool/0.4.9 -prefs=runtime.tools.xtensa-lx106-elf-gcc.path=/Users/steve/Library/Arduino15/packages/esp8266/tools/xtensa-lx106-elf-gcc/1.20.0-26-gb404fb9-2 -prefs=runtime.tools.mkspiffs.path=/Users/steve/Library/Arduino15/packages/esp8266/tools/mkspiffs/0.1.2"
 ```
 
-
+You can get these options by enable verbose output when compile/upload in Arduino IDE.
 
 ## Known Issues
 
