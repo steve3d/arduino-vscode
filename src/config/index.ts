@@ -151,7 +151,6 @@ export class ConfigUtil {
 
     get buildArgs(): string[] {
         let args = [
-            this._verbose ? '-verbose' : '',
             '-compile',
             '-logger', this._verbose ? 'human' : 'machine',
             '-hardware', `${this._idePath}/hardware`,
@@ -166,8 +165,12 @@ export class ConfigUtil {
             `-prefs=runtime.tools.avr-gcc.path=${this._idePath}/hardware/tools/avr`,
             `-prefs=runtime.tools.avrdude.path=${this._idePath}/hardware/tools/avr`,
             `-prefs=runtime.tools.arduinoOTA.path=${this._idePath}/hardware/tools/avr`,
-        ].concat(this._compileOptions,
-            vscode.window.activeTextEditor.document.fileName);
+        ].concat(this._compileOptions);
+
+        if(this._verbose)
+            args.push('-verbose');
+
+        args.push(vscode.window.activeTextEditor.document.fileName);
 
         return this._convertSeprator ? args.map(x => x.replace(/\//g, '\\')) : args;
     }
