@@ -5,6 +5,7 @@ The Arduino extension makes it easy to build and upload Arduino sketch from Visu
 * C++ intellisense with cpptools
 * Build/Compile sketch with VSCode
 * Upload sketch
+* Custom uploader support
 
 ## Features
 
@@ -33,6 +34,8 @@ This extension contributes the following settings:
 * `arduino.programmer`: Specify programmer type (Upload only)
 * `arduino.baudrate`: Override RS-232 baud rate (Upload only)
 * `arduino.verbose`: Use verbose output when build and upload.
+
+Please note, every path here should be absolute path, relative path won't work.
 
 ## Custom uploader support
 
