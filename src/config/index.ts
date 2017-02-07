@@ -101,12 +101,32 @@ export class ConfigUtil {
         return this._serialPort != null;
     }
 
+    get mainFile() {
+        let rootPath = vscode.workspace.rootPath;
+        let mainFile = vscode.window.activeTextEditor.document.fileName;
+
+        if (mainFile.toLowerCase().endsWith('.ino')) {
+            return mainFile;
+        }
+
+        fs.readdirSync(rootPath).forEach(file => {
+            if (file.toLowerCase().endsWith('.ino')) {
+                mainFile = rootPath + '/' + file;
+            }
+        });
+        return mainFile
+    }
+
     get basename(): string {
-        return path.basename(vscode.window.activeTextEditor.document.fileName, '.ino')
+        let mainFile = this.mainFile;
+        if (mainFile.toLowerCase().endsWith('.ino')) {
+            return path.basename(this.mainFile);
+        }
+        return path.basename(this.mainFile, '.ino');
     }
 
     get filename(): string {
-        return path.basename(vscode.window.activeTextEditor.document.fileName);
+        return path.basename(this.mainFile);
     }
 
     get hexPath(): string {
@@ -177,7 +197,7 @@ export class ConfigUtil {
         if(this._verbose)
             args.push('-verbose');
 
-        args.push(vscode.window.activeTextEditor.document.fileName);
+        args.push(this.mainFile);
 
         return this._convertSeprator ? args.map(x => x.replace(/\//g, '\\')) : args;
     }

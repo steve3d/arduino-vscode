@@ -107,8 +107,9 @@ export class ArduinoVS {
             return;
         }
 
-        if (document.isUntitled) {
+        if (document.isUntitled && document.fileName === this.config.mainFile) {
             vscode.window.showInformationMessage('Please save the file first!');
+            return;
         }
 
         if (document.isDirty) {
