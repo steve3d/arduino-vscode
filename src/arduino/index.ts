@@ -185,8 +185,8 @@ export class ArduinoVS {
     };
 
     clean(info = true) {
-        if (fs.existsSync(this.config.tempPath)) {
-            this.deleteFolderRecursive(this.config.tempPath);
+        if (fs.existsSync(this.config.buildPath)) {
+            this.deleteFolderRecursive(this.config.buildPath);
             if(info)
                 vscode.window.showInformationMessage('Intermediate ouput folder cleaned.');
         } else if(info)

@@ -110,22 +110,22 @@ export class ConfigUtil {
     }
 
     get hexPath(): string {
-        return path.join(vscode.workspace.rootPath, `tmp/${this.basename}/${this.filename}`);
+        return path.join(vscode.workspace.rootPath, `.build/${this.basename}/${this.filename}`);
     }
 
-    get tempPath(): string {
+    get buildPath(): string {
         let document = vscode.window.activeTextEditor.document;
 
-        let tmpPath = path.join(vscode.workspace.rootPath, `tmp`);
+        let buildPath = path.join(vscode.workspace.rootPath, `.build`);
 
-        if (!fs.existsSync(tmpPath))
-            fs.mkdirSync(tmpPath);
+        if (!fs.existsSync(buildPath))
+            fs.mkdirSync(buildPath);
 
-        tmpPath = path.join(tmpPath, this.basename);
-        if (!fs.existsSync(tmpPath))
-            fs.mkdirSync(tmpPath);
+        buildPath = path.join(buildPath, this.basename);
+        if (!fs.existsSync(buildPath))
+            fs.mkdirSync(buildPath);
 
-        return tmpPath;
+        return buildPath;
     }
 
     get cppConfig(): any {
@@ -166,7 +166,7 @@ export class ConfigUtil {
             '-built-in-libraries', `${this._idePath}/libraries`,
             '-libraries', `${this._libraryPath}`,
             `-fqbn=${this._fqbn}`,
-            '-build-path', this.tempPath,
+            '-build-path', this.buildPath,
             '-warnings=none',
             `-prefs=build.warn_data_percentage=${this._warnPercentage}`,
             `-prefs=runtime.tools.avr-gcc.path=${this._idePath}/hardware/tools/avr`,
