@@ -141,14 +141,10 @@ export class ConfigUtil {
         if (this._libraryPath) {
             includes.push(this._libraryPath);
             // libs path
-            let libs = fs.readdirSync(this._libraryPath);
-            libs.forEach((libName) => {
-                if (libName.startsWith(".")) { return; }
-                let libPath = path.join(this._libraryPath,libName);
-                if (fs.statSync(libPath).isDirectory) {
-                    includes.push(libPath);            
-                }
-            });
+            fs.readdirSync(this._libraryPath)
+                .map(item => path.join(this._libraryPath, item))
+                .filter(item => fs.lstatSync(item).isDirectory())
+                .forEach(item => includes.push(item));
         }
 
         if(this._convertSeprator)

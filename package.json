@@ -2,7 +2,7 @@
     "name": "arduino-vscode",
     "displayName": "Arduino",
     "description": "Arduino Support for VSCode",
-    "version": "0.2.1",
+    "version": "0.2.2",
     "publisher": "steveyin",
     "license": "LGPL-3.0",
     "icon": "images/arduino-logo.svg",

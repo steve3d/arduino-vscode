@@ -1,6 +1,10 @@
 # Change Log
 All notable changes to the "arduino-vscode" extension will be documented in this file.
 
+## 0.2.2 - 2017-03-21
+- Display size summary after building. #15
+- and some improvement for setting documentation
+
 ## 0.2.1 - 2017-02-14
 - bug fix
 
