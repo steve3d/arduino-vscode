@@ -14,6 +14,7 @@ export class ConfigUtil {
     private _libraryPath: string;
     private _serialPort: string;
     private _fqbn: string;
+    private _warnMode: string;
     private _warnPercentage: number;
     private _partno: string;
     private _programmer: string;
@@ -33,6 +34,7 @@ export class ConfigUtil {
     private _updateSettings() {
         let config = vscode.workspace.getConfiguration('arduino');
         this._fqbn = config.get<string>('fqbn');
+        this._warnMode = config.get<string>('warnMode');
         this._warnPercentage = config.get<number>('warnPercentage');
         this._partno = config.get<string>('partno');
         this._programmer = config.get<string>('programmer');
@@ -167,7 +169,7 @@ export class ConfigUtil {
             '-libraries', `${this._libraryPath}`,
             `-fqbn=${this._fqbn}`,
             '-build-path', this.buildPath,
-            '-warnings=none',
+            `-warnings=${this._warnMode}`,
             `-prefs=build.warn_data_percentage=${this._warnPercentage}`,
             `-prefs=runtime.tools.avr-gcc.path=${this._idePath}/hardware/tools/avr`,
             `-prefs=runtime.tools.avrdude.path=${this._idePath}/hardware/tools/avr`,
@@ -212,6 +214,15 @@ export class ConfigUtil {
         return this._convertSeprator ? args.map(x => x.replace(/\//g, '\\')) : args;
     }
 
+    get sizeArgs(): string[] {
+        let args: string[];
+        args = ['-C',   // Used -C option, because the output is immediately in human readable format
+            `--mcu=${this._partno}`,
+            `${this.hexPath}.elf`];
+
+        return this._convertSeprator ? args.map(x => x.replace(/\//g, '\\')) : args;
+    }
+
     get builder(): string {
         let builder = path.join(this._idePath, 'arduino-builder');
 
@@ -231,6 +242,15 @@ export class ConfigUtil {
             avrdude = avrdude.replace(/\\/g, '\\') + '.exe';
 
         return avrdude;
+    }
+
+    get avrsize(): string {
+        let avrsize = path.join(this._idePath, 'hardware/tools/avr/bin/avr-size');
+
+        if (this._convertSeprator)
+            avrsize = avrsize.replace(/\\/g, '\\') + '.exe';
+
+        return avrsize;
     }
 
     get verbose(): boolean {

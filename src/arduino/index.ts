@@ -144,7 +144,13 @@ export class ArduinoVS {
             this.output.append(error);
         });
 
-        spawn.on('close', (result) => this.onBuildFinished(result, statusBarItem))
+        spawn.on('close', (result) => {
+            // If build successed then we display summary output size.
+            if (result == 0)
+                this.summarySize((summaryResult) => this.onBuildFinished(result, statusBarItem));
+            else
+                this.onBuildFinished(result, statusBarItem);
+        });
     }
 
     onBuildFinished(result: number, statusBarItem: vscode.StatusBarItem) {
@@ -264,5 +270,28 @@ export class ArduinoVS {
                 vscode.window.showErrorMessage('Build failed, Can not upload.');
 
         });
+    }
+
+    summarySize(onEnd: (resultCode: number) => void): void {
+        let spawn = child_process.spawn(this.config.avrsize, this.config.sizeArgs);
+
+        // Add empty line
+        this.output.appendLine('');
+
+        spawn.stdout.on('data', data => {
+            let msg: string = String.fromCharCode.apply(null, data);
+            this.output.append(msg);
+        });
+
+        spawn.stderr.on('data', data => {
+            let error:string = String.fromCharCode.apply(null, data);
+
+            error.split('\n')
+                .forEach(line => this.addDiagnostic(line.match(/(.*):(\d+):(\d+):\s+(warning|error):\s+(.*)/)));
+
+            this.output.append(error);
+        });
+
+        spawn.on('close', (result) => onEnd(result));
     }
 }
