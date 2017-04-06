@@ -1,166 +1,202 @@
 {
-    "name": "arduino-vscode",
-    "displayName": "Arduino",
-    "description": "Arduino Support for VSCode",
-    "version": "0.2.2",
-    "publisher": "steveyin",
-    "license": "LGPL-3.0",
-    "icon": "images/arduino-logo.svg",
-    "preview": true,
-    "homepage": "https://github.com/steve3d/arduino-vscode/blob/master/README.md",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/steve3d/arduino-vscode.git"
-    },
-    "engines": {
-        "vscode": "^1.5.0"
-    },
-    "extensionDependencies": [
-        "ms-vscode.cpptools"
-    ],
-    "categories": [
-        "Other"
-    ],
-    "activationEvents": [
-        "onCommand:extension.build",
-        "onCommand:extension.rebuild",
-        "onCommand:extension.clean",
-        "onCommand:extension.upload",
-        "onCommand:extension.buildAndUpload",
-        "onCommand:extension.rebuildAndUpload",
-        "onCommand:extension.initialize"
-    ],
-    "main": "./out/src/extension",
-    "contributes": {
-        "configuration": {
-            "type": "object",
-            "title": "Arduino configuration",
-            "properties": {
-                "arduino.idePath": {
-                    "type": ["string"],
-                    "default": null,
-                    "description": "Specify where the Arduino IDE is (Absolute path only)."
-                },
-                "arduino.libraryPath": {
-                    "type": ["string"],
-                    "default": null,
-                    "description": "Specifies the path to your library directory. Default is used path to /Documents/Arduino/libraries (Absolute path only)."
-                },
-                "arduino.fqbn": {
-                    "type": ["string"],
-                    "default": "arduino:avr:uno",
-                    "description": "Specifies the board type to use (fully qualified board name). \nYou can find this value in Arduino IDE output with checked \"verbose\" option in preferences or in boards.txt file in Arduino IDE directory. \n\nFormat: {packageID}:{platformID}:{boardID}:{boardOptions}. \nPlatform ID is usually name of directory with board.txt and package ID is usually name of directory contains parent of board.txt. \nBoard ID is prefix with board name from board.txt (part before first dot). \nIf board has different versions then you must specify BoardOptions. Usualy you must provide CPU variant in format cpu=version where version is the part from board.txt after part \"cpu\". \n\nFor example for Arduino Pro Mini (Atmega328p, 8MHz) we have in board.txt entry: pro.menu.cpu.8MHzatmega168=ATmega168 (3.3V, 8 MHz). Then full qualified name is: arduino:avr:pro:cpu=8MHzatmega328"
-                },
-                "arduino.serialPort": {
-                    "type": ["string"],
-                    "default": null,
-                    "description": "Specifies the serial port board are connected. (Windows: COMx, macOS: /dev/cu./dev/cu.usbmodemxxxx, Linux: /dev/ttyUSBxx)"
-                },
-                "arduino.warnMode": {
-                    "type":["string"],
-                    "default": "none",
-                    "description": "Specifies warnig verbosity. Possible values: \"none\", \"default\", \"more\", \"all\"."
-                },
-                "arduino.warnPercentage": {
-                    "type": ["number"],
-                    "default": 75,
-                    "description": ""
-                },
-                "arduino.compileOptions": {
-                    "type": ["string"],
-                    "default": "",
-                    "description": "Additional options for compile"
-                },
-                "arduino.uploader": {
-                    "type": ["string"],
-                    "default": null,
-                    "description": "Custom uploader for extra board types (Note: Set full upload options with this)"
-                },
-                "arduino.uploadOptions": {
-                    "type": ["string"],
-                    "default": "-D -q",
-                    "description": "Additional options for avrdude upload"
-                },
-                "arduino.partno": {
-                    "type": ["string"],
-                    "default": "atmega328p",
-                    "description": "Upload: Specify AVR device"
-                },
-                "arduino.programmer": {
-                    "type": ["string"],
-                    "default": "arduino",
-                    "description": "Upload: Specify programmer type"
-                },
-                "arduino.baudrate": {
-                    "type": ["number"],
-                    "default": 115200,
-                    "description": "Upload: Override RS-232 baud rate"
-                },
-                "arduino.verbose": {
-                    "type": ["boolean"],
-                    "default": false,
-                    "description": "Use verbose output in build and upload showing the build/upload flags."
-                }
-            }
+  "name": "arduino-vscode",
+  "displayName": "Arduino",
+  "description": "Arduino Support for VSCode",
+  "version": "0.2.2",
+  "publisher": "steveyin",
+  "license": "LGPL-3.0",
+  "icon": "images/arduino-logo.svg",
+  "preview": true,
+  "homepage": "https://github.com/steve3d/arduino-vscode/blob/master/README.md",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/steve3d/arduino-vscode.git"
+  },
+  "engines": {
+    "vscode": "^1.5.0"
+  },
+  "extensionDependencies": [
+    "ms-vscode.cpptools"
+  ],
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onCommand:extension.build",
+    "onCommand:extension.rebuild",
+    "onCommand:extension.clean",
+    "onCommand:extension.upload",
+    "onCommand:extension.buildAndUpload",
+    "onCommand:extension.rebuildAndUpload",
+    "onCommand:extension.initialize"
+  ],
+  "main": "./out/src/extension",
+  "contributes": {
+    "configuration": {
+      "type": "object",
+      "title": "Arduino configuration",
+      "properties": {
+        "arduino.idePath": {
+          "type": [
+            "string"
+          ],
+          "default": null,
+          "description": "Specify where the Arduino IDE is (Absolute path only)."
         },
-        "commands": [
-            {
-                "command": "extension.build",
-                "title": "Arduino: Build",
-                "icon": "./images/compile.svg"
-            },
-            {
-                "command": "extension.rebuild",
-                "title": "Arduino: Rebuild"
-            },
-            {
-                "command": "extension.clean",
-                "title": "Arduino: Clean"
-            },
-            {
-                "command": "extension.upload",
-                "title": "Arduino: Upload",
-                "icon": "./images/upload.svg"
-            },
-            {
-                "command": "extension.buildAndUpload",
-                "title": "Arduino: Build & Upload"
-            },
-            {
-                "command": "extension.rebuildAndUpload",
-                "title": "Arduino: Rebuild & Upload"
-            },
-            {
-                "command": "extension.initialize",
-                "title": "Arduino: Initialize C++ Intellisense"
-            }
-        ],
-        "menus": {
-            "editor/title": [
-                {
-                    "when": "resourceLangId == cpp",
-                    "command": "extension.build",
-                    "group": "navigation"
-                },
-                {
-                    "when": "resourceLangId == cpp",
-                    "command": "extension.upload",
-                    "group": "navigation"
-                }
-            ]
+        "arduino.libraryPath": {
+          "type": [
+            "string"
+          ],
+          "default": null,
+          "description": "Specifies the path to your library directory. Default is used path to /Documents/Arduino/libraries (Absolute path only)."
+        },
+        "arduino.fqbn": {
+          "type": [
+            "string"
+          ],
+          "default": "arduino:avr:uno",
+          "description": "Specifies the board type to use (fully qualified board name). \nYou can find this value in Arduino IDE output with checked \"verbose\" option in preferences or in boards.txt file in Arduino IDE directory. \n\nFormat: {packageID}:{platformID}:{boardID}:{boardOptions}. \nPlatform ID is usually name of directory with board.txt and package ID is usually name of directory contains parent of board.txt. \nBoard ID is prefix with board name from board.txt (part before first dot). \nIf board has different versions then you must specify BoardOptions. Usualy you must provide CPU variant in format cpu=version where version is the part from board.txt after part \"cpu\". \n\nFor example for Arduino Pro Mini (Atmega328p, 8MHz) we have in board.txt entry: pro.menu.cpu.8MHzatmega168=ATmega168 (3.3V, 8 MHz). Then full qualified name is: arduino:avr:pro:cpu=8MHzatmega328"
+        },
+        "arduino.serialPort": {
+          "type": [
+            "string"
+          ],
+          "default": null,
+          "description": "Specifies the serial port board are connected. (Windows: COMx, macOS: /dev/cu./dev/cu.usbmodemxxxx, Linux: /dev/ttyUSBxx)"
+        },
+        "arduino.warnMode": {
+          "type": [
+            "string"
+          ],
+          "default": "none",
+          "description": "Specifies warnig verbosity. Possible values: \"none\", \"default\", \"more\", \"all\"."
+        },
+        "arduino.warnPercentage": {
+          "type": [
+            "number"
+          ],
+          "default": 75,
+          "description": ""
+        },
+        "arduino.compileOptions": {
+          "type": [
+            "string"
+          ],
+          "default": "",
+          "description": "Additional options for compile"
+        },
+        "arduino.uploader": {
+          "type": [
+            "string"
+          ],
+          "default": null,
+          "description": "Custom uploader for extra board types (Note: Set full upload options with this)"
+        },
+        "arduino.uploadOptions": {
+          "type": [
+            "string"
+          ],
+          "default": "-D -q",
+          "description": "Additional options for avrdude upload"
+        },
+        "arduino.partno": {
+          "type": [
+            "string"
+          ],
+          "default": "atmega328p",
+          "description": "Upload: Specify AVR device"
+        },
+        "arduino.programmer": {
+          "type": [
+            "string"
+          ],
+          "default": "arduino",
+          "description": "Upload: Specify programmer type"
+        },
+        "arduino.baudrate": {
+          "type": [
+            "number"
+          ],
+          "default": 115200,
+          "description": "Upload: Override RS-232 baud rate"
+        },
+        "arduino.verbose": {
+          "type": [
+            "boolean"
+          ],
+          "default": false,
+          "description": "Use verbose output in build and upload showing the build/upload flags."
+        },
+        "arduino.sketch": {
+          "type": [
+            "string"
+          ],
+          "default": "<current file>",
+          "description": "Specify which source file is your sketch. If not specified, then the currently opened file is used."
         }
+      }
     },
-    "scripts": {
-        "vscode:prepublish": "tsc -p ./",
-        "compile": "tsc -watch -p ./",
-        "postinstall": "node ./node_modules/vscode/bin/install",
-        "test": "node ./node_modules/vscode/bin/test"
-    },
-    "devDependencies": {
-        "typescript": "^2.0.3",
-        "vscode": "^1.0.0",
-        "mocha": "^2.3.3",
-        "@types/node": "^6.0.40",
-        "@types/mocha": "^2.2.32"
+    "commands": [
+      {
+        "command": "extension.build",
+        "title": "Arduino: Build",
+        "icon": "./images/compile.svg"
+      },
+      {
+        "command": "extension.rebuild",
+        "title": "Arduino: Rebuild"
+      },
+      {
+        "command": "extension.clean",
+        "title": "Arduino: Clean"
+      },
+      {
+        "command": "extension.upload",
+        "title": "Arduino: Upload",
+        "icon": "./images/upload.svg"
+      },
+      {
+        "command": "extension.buildAndUpload",
+        "title": "Arduino: Build & Upload"
+      },
+      {
+        "command": "extension.rebuildAndUpload",
+        "title": "Arduino: Rebuild & Upload"
+      },
+      {
+        "command": "extension.initialize",
+        "title": "Arduino: Initialize C++ Intellisense"
+      }
+    ],
+    "menus": {
+      "editor/title": [
+        {
+          "when": "resourceLangId == cpp",
+          "command": "extension.build",
+          "group": "navigation"
+        },
+        {
+          "when": "resourceLangId == cpp",
+          "command": "extension.upload",
+          "group": "navigation"
+        }
+      ]
     }
+  },
+  "scripts": {
+    "vscode:prepublish": "tsc -p ./",
+    "compile": "tsc -watch -p ./",
+    "postinstall": "node ./node_modules/vscode/bin/install",
+    "test": "node ./node_modules/vscode/bin/test"
+  },
+  "devDependencies": {
+    "typescript": "^2.0.3",
+    "vscode": "^1.0.0",
+    "mocha": "^2.3.3",
+    "@types/node": "^6.0.40",
+    "@types/mocha": "^2.2.32"
+  },
+  "dependencies": {
+    "splitargs": "0.0.7"
+  }
 }

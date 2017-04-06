@@ -18,7 +18,7 @@ export class ArduinoVS {
     private errors: Object;
 
     constructor(private output: vscode.OutputChannel) {
-        this.config = new ConfigUtil();
+        this.config = new ConfigUtil(output);
 
         this.diagnostics = vscode.languages.createDiagnosticCollection();
     }
@@ -107,13 +107,22 @@ export class ArduinoVS {
             return;
         }
 
+        if (!this.config.hasValidFilename) {
+            vscode.window.showErrorMessage('Either set "arduino.sketch" property in workspace settings or select a valid Arduino source file.');
+            return;
+        }
+
         if (document.isUntitled) {
             vscode.window.showInformationMessage('Please save the file first!');
         }
 
         if (document.isDirty) {
             document.save()
-                .then((success) => console.log('save status:', success));
+                .then((success) => {
+                    console.log('save status:', success);
+                    this.build();
+                });
+            return;
         }
 
         this.errors = {};
@@ -130,6 +139,11 @@ export class ArduinoVS {
         let status = 'Compiling ';
         statusBarItem.text = status + '0%';
         statusBarItem.show();
+
+        spawn.on('error', err => {
+            this.output.append('\n Upload failed (' + err.message + ').\n Check builder configuration.\n');
+            this.building = false;
+        });
 
         spawn.stdout.on('data', data => this.showProgress(String.fromCharCode.apply(null, data),
             statusBarItem,
@@ -154,9 +168,9 @@ export class ArduinoVS {
     }
 
     onBuildFinished(result: number, statusBarItem: vscode.StatusBarItem) {
+        this.building = false;
         this.builtEvent.emit('build', result);
         statusBarItem.dispose();
-        this.building = false;
         if(result)
             this.output.show(true);
 
@@ -236,7 +250,15 @@ export class ArduinoVS {
         }
 
         spawn.stdout.on('data', data => this.output.append(String.fromCharCode.apply(null, data)));
-        spawn.stderr.on('data', data => this.output.append(String.fromCharCode.apply(null, data)));
+
+        spawn.stderr.on('data', data => {
+            this.output.append(String.fromCharCode.apply(null, data));
+            this.uploading = false;
+        });
+        spawn.on('error', err => {
+            this.output.append('\n Upload failed (' + err.message + ').\n Check uploader configuration.\n');
+            this.uploading = false;
+        });
         spawn.on('close', (result) => {
             this.uploading = false;
             this.output.append(`\nUpload ${result ? 'failed' : 'success'}.\n`);
@@ -273,7 +295,12 @@ export class ArduinoVS {
     }
 
     summarySize(onEnd: (resultCode: number) => void): void {
-        let spawn = child_process.spawn(this.config.avrsize, this.config.sizeArgs);
+        let spawn = child_process.spawn(this.config.avrsize, this.config.sizeArgs)
+
+        spawn.on('error', err => {
+            this.output.append('\n Sizing failed (' + err.message + ').\n Check size configuration.\n');
+            this.uploading = false;
+        });
 
         // Add empty line
         this.output.appendLine('');
