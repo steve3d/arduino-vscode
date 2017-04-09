@@ -23,8 +23,8 @@ Integrate the Arduino IDE for VSCode, with this extension, you can edit sketch w
 This extension contributes the following settings:
 
 * `arduino.idePath`: Specify where the Arduino IDE is (Note: Absolute path only).
-* `arduino.libraryPath`: Sprcifies the serial port borad are connected (Note: Absolute path only).
-* `arduino.fqbn`: Specifies the borad type to use (fully qualified board name).
+* `arduino.libraryPath`: Specifies the serial port board are connected (Note: Absolute path only).
+* `arduino.fqbn`: Specifies the board type to use (fully qualified board name).
 * `arduino.serialPort`: Specifies the serial port borad are connected. (Windows: COMx, macOS: /dev/cu./dev/cu.usbmodemxxxx, Linux: /dev/ttyUSBxx)
 * `arduino.warnPercentage`: set to `blah` to do something
 * `arduino.compileOptions`: Additional options for compile the sketch
