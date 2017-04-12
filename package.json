@@ -131,7 +131,7 @@
           "type": [
             "string"
           ],
-          "default": "<current file>",
+          "default": null,
           "description": "Specify which source file is your sketch. If not specified, then the currently opened file is used."
         }
       }
