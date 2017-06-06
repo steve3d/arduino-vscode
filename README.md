@@ -55,12 +55,12 @@ For example:
 "arduino.compileOptions": "-hardware /Users/steve/Library/Arduino15/packages -tools /Users/steve/Library/Arduino15/packages -prefs=runtime.tools.esptool.path=/Users/steve/Library/Arduino15/packages/esp8266/tools/esptool/0.4.9 -prefs=runtime.tools.xtensa-lx106-elf-gcc.path=/Users/steve/Library/Arduino15/packages/esp8266/tools/xtensa-lx106-elf-gcc/1.20.0-26-gb404fb9-2 -prefs=runtime.tools.mkspiffs.path=/Users/steve/Library/Arduino15/packages/esp8266/tools/mkspiffs/0.1.2"
 ```
 
-You can get these options by enable verbose output when compile/upload in Arduino IDE.
+You can get these options by enabling verbose output when you compile/upload in Arduino IDE.
 
 ## Known Issues
 
 Linux support not tested, but it should work.
-Custom uploader not tested, because I don't have those board to test.
+Custom uploader not tested, because I don't have a board that requires or implements a custom uploader to test.
 
 ## Change log
 
