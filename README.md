@@ -15,7 +15,7 @@ Integrate the Arduino IDE for VSCode, with this extension, you can edit sketch w
 
 * Recent version of Arduino IDE (at least v1.8.x)
 * ms-vscode.cpptools extension for C++ intellisense to work
-* A Arduino compatiable board to develop. :)
+* An Arduino compatiable board to develop. :)
 * Manually associate the .ino file to C++ if needed.
 
 ## Extension Settings
