@@ -1,4 +1,5 @@
-# Arduino Support for Visual Studio Code
+# Arduino Support for Visual Studio Code (abandoned)
+
 
 The Arduino extension makes it easy to build and upload Arduino sketch from Visual Studio Code.
 
